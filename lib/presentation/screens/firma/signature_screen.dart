@@ -3,17 +3,22 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:signature/signature.dart';
+import 'package:test_app/config/router/app_router.dart';
+import 'package:test_app/domain/entities/empleado.dart';
+import 'package:test_app/presentation/providers/data_provider.dart';
+import 'package:test_app/presentation/providers/empleado_provider.dart';
 import 'package:test_app/presentation/widgets/helpers/show_snackbar.dart';
 
-class SignatureScreen extends StatefulWidget {
+class SignatureScreen extends ConsumerStatefulWidget {
   const SignatureScreen({super.key});
 
   @override
   SignatureScreenState createState() => SignatureScreenState();
 }
 
-class SignatureScreenState extends State<SignatureScreen> {
+class SignatureScreenState extends ConsumerState<SignatureScreen> {
   // Crea un controlador para la firma
   final SignatureController _controller = SignatureController(
     penColor: Colors.black, // Color del bolígrafo
@@ -63,7 +68,20 @@ class SignatureScreenState extends State<SignatureScreen> {
               const SizedBox(width: 20),
               // Botón para guardar la firma
               OutlinedButton(
-                onPressed: _saveSignature,
+                onPressed: () {
+                  _saveSignature();
+                  final newEmplado = 
+                  Empleado(
+                    id: 0, 
+                    nombre: ref.read(nombreProvider), 
+                    apellido: ref.read(apellidoProvider), 
+                    cedula: ref.read(cedulaProvider), 
+                    firma: ref.read(apellidoProvider), 
+                    area: ref.read(areaProvider), 
+                    cargo: ref.read(cargoProvider)
+                  );
+                  ref.read(empleadosProvider.notifier).save(newEmplado);
+                },
                 child: const Text('Guardar'),
               ),
             ],

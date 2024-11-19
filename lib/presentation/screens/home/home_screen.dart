@@ -22,6 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){},
+        child: const Icon(Icons.list),
+      ),
       body: Stack(
         children: [
           CustomPaint(
@@ -253,7 +257,9 @@ class FormView3State extends ConsumerState<FormView3> {
               child: OutlinedButton(
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {
-                    // Si el formulario es válido, pasamos a la siguiente página
+                    ref.read(cargoProvider.notifier).state = _selectedCargo!;
+                    ref.read(areaProvider.notifier).state = _selectedArea!;
+
                     widget.pageController.nextPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,

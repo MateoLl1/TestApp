@@ -16,4 +16,11 @@ final cedulaProvider = StateProvider<String>((ref) {
 });
 
 
+final cargoProvider = StateProvider<String>((ref) {
+  return '';
+});
+final areaProvider = StateProvider<String>((ref) {
+  return '';
+});
+
 
