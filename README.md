@@ -18,3 +18,7 @@ A Flutter application for managing employee information, including details such 
 ## APK
 
 El apk para poder probar esta en la raiz del proyecto se llama app.apk
+
+## BASE DE DATOS SQL SERVER
+
+Este es el bacckup de la base de datos en sql server database.bacpac
