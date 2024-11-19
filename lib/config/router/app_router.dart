@@ -14,7 +14,7 @@ final appRouter = GoRouter(
 
     GoRoute(
       path: '/signature',
-      builder: (context, state) => SignatureScreen(),
+      builder: (context, state) => const SignatureScreen(),
     ),
   ]
 );

@@ -1,5 +1,7 @@
 
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import 'package:test_app/presentation/widgets/helpers/show_snackbar.dart';
@@ -8,10 +10,10 @@ class SignatureScreen extends StatefulWidget {
   const SignatureScreen({super.key});
 
   @override
-  _SignatureScreenState createState() => _SignatureScreenState();
+  SignatureScreenState createState() => SignatureScreenState();
 }
 
-class _SignatureScreenState extends State<SignatureScreen> {
+class SignatureScreenState extends State<SignatureScreen> {
   // Crea un controlador para la firma
   final SignatureController _controller = SignatureController(
     penColor: Colors.black, // Color del bolígrafo
