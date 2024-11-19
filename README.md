@@ -1,16 +1,20 @@
-# test_app
+# Test App
 
-A new Flutter project.
+A Flutter application for managing employee information, including details such as name, surname, ID (cedula), position, department, and signature. This app demonstrates how to save employee data locally using SQLite and provides a notification upon successful data entry.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Add employee information (Name, Surname, Cedula, Position, Department, and Signature)
+- Save data locally in SQLite
+- Show a success notification when data is stored
 
-A few resources to get you started if this is your first Flutter project:
+## Installation
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/MateoLl1/TestApp.git
+   ```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## APK
+
+El apk para poder probar esta en la raiz del proyecto se llama app.apk

@@ -12,7 +12,8 @@ class CustomTextFormField extends StatefulWidget {
       this.oscureText = false, 
       this.onFieldSubmitted, 
       this.onTapOutside, 
-      this.focusNode
+      this.focusNode,
+      this.textFormType = TextInputType.emailAddress,
     });
 
   final String? label;
@@ -25,6 +26,7 @@ class CustomTextFormField extends StatefulWidget {
   final Function(String)? onFieldSubmitted;
   final void Function(PointerDownEvent)? onTapOutside;
   final FocusNode? focusNode;
+  final TextInputType? textFormType;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -40,7 +42,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     );
 
     return TextFormField(
-      keyboardType: TextInputType.emailAddress,
+      keyboardType: widget.textFormType,
       focusNode: widget.focusNode,
       onTapOutside: (event) {
         widget.focusNode?.unfocus();

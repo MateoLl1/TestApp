@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:test_app/presentation/providers/data_provider.dart';
+import 'package:test_app/presentation/screens/firma/signature_screen.dart';
 import 'package:test_app/presentation/screens/painters/home_painter.dart';
 import 'package:test_app/presentation/widgets/helpers/show_snackbar.dart';
 import 'package:test_app/presentation/widgets/helpers/validar_cedula.dart';
@@ -25,10 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
           CustomPaint(
             painter: HomePainter(color: colors.primary),
             child: PageView(
+              // physics: const NeverScrollableScrollPhysics(),
               controller: _pageController, // Asocia el controlador de página
               children: [
                 FormHome1(pageController: _pageController),
-                const FormView3(),
+                FormView3(pageController: _pageController,),
+                SignatureScreen()
               ],
             ),
           )
@@ -39,21 +44,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose(); // Libera el controlador al finalizar
+    _pageController.dispose(); 
     super.dispose();
   }
 }
 
-class FormHome1 extends StatefulWidget {
+class FormHome1 extends ConsumerStatefulWidget {
   final PageController pageController;
 
   const FormHome1({super.key, required this.pageController});
 
   @override
-  State<FormHome1> createState() => _FormHome1State();
+  FormHome1State createState() => FormHome1State();
 }
 
-class _FormHome1State extends State<FormHome1> {
+class FormHome1State extends ConsumerState<FormHome1> {
   final _nameFocusNode = FocusNode();
   final _lastnameFocusNode = FocusNode();
   final _cedulaFocusNode = FocusNode();
@@ -89,6 +94,7 @@ class _FormHome1State extends State<FormHome1> {
                 return null;
               },
               onChanged: (value) {
+                ref.read(nombreProvider.notifier).state = value;
                 _formKey.currentState?.validate();
               },
             ),
@@ -99,6 +105,7 @@ class _FormHome1State extends State<FormHome1> {
               icon: Icons.person_2_outlined,
               focusNode: _lastnameFocusNode,
               onChanged: (value) {
+                ref.read(apellidoProvider.notifier).state = value;
                 _formKey.currentState?.validate();
               },
               validator: (value) {
@@ -109,11 +116,13 @@ class _FormHome1State extends State<FormHome1> {
             const SizedBox(height: 10),
             CustomTextFormField(
               label: 'Cedula',
+              textFormType: TextInputType.number,
               hintText: 'Ejm: 1756147899',
               icon: Icons.edit_document,
               focusNode: _cedulaFocusNode,
               validator: validarCedulaEcuatoriana,
               onChanged: (value) {
+                ref.read(cedulaProvider.notifier).state = value;
                 _formKey.currentState?.validate();
               },
             ),
@@ -150,87 +159,119 @@ class _FormHome1State extends State<FormHome1> {
   }
 }
 
-class FormView3 extends StatefulWidget {
-  const FormView3({super.key});
+class FormView3 extends ConsumerStatefulWidget {
+  final PageController pageController;
+  const FormView3({super.key, required this.pageController});
 
   @override
-  State<FormView3> createState() => _FormView3State();
+  FormView3State createState() => FormView3State();
 }
 
-class _FormView3State extends State<FormView3> {
-
-  
-
+class FormView3State extends ConsumerState<FormView3> {
+  final _formKey = GlobalKey<FormState>(); 
+  String? _selectedCargo;
+  String? _selectedArea;
 
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsetsDirectional.symmetric(horizontal: 20, vertical: 10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Tipo de empleado',
-            style: textStyle.titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
-              fontSize: 35,
+      child: Form( // Agregamos el Form widget para validación
+        key: _formKey, // Asignamos la clave para la validación
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Tipo de empleado',
+              style: textStyle.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+                fontSize: 35,
+              ),
             ),
-          ),
-          const Divider(),
-          const SizedBox(height: 20),
-          
-          const SizedBox(height: 10),
+            const Divider(),
+            const SizedBox(height: 20),
 
-          // Dropdown para Cargo
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: 'Cargo',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.work),
+            // Dropdown para Cargo
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: 'Cargo',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.work),
+              ),
+              value: _selectedCargo, // Asignamos el valor seleccionado
+              items: const [
+                DropdownMenuItem(value: 'Supervisor', child: Text('Supervisor')),
+                DropdownMenuItem(value: 'Líder', child: Text('Líder')),
+                DropdownMenuItem(value: 'Operario', child: Text('Operario')),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedCargo = value;
+                });
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor seleccione un cargo';
+                }
+                return null;
+              },
             ),
-            items: const [
-              DropdownMenuItem(value: 'Supervisor', child: Text('Supervisor')),
-              DropdownMenuItem(value: 'Líder', child: Text('Líder')),
-              DropdownMenuItem(value: 'Operario', child: Text('Operario')),
-            ],
-            onChanged: (value) {},
-          ),
-          const SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-          // Dropdown para Área
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: 'Área',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.apartment),
+            // Dropdown para Área
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: 'Área',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.apartment),
+              ),
+              value: _selectedArea, // Asignamos el valor seleccionado
+              items: const [
+                DropdownMenuItem(value: 'Financiera', child: Text('Financiera')),
+                DropdownMenuItem(value: 'Talento Humano', child: Text('Talento Humano')),
+                DropdownMenuItem(value: 'Operaciones', child: Text('Operaciones')),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedArea = value;
+                });
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor seleccione un área';
+                }
+                return null;
+              },
             ),
-            items: const [
-              DropdownMenuItem(value: 'Financiera', child: Text('Financiera')),
-              DropdownMenuItem(value: 'Talento Humano', child: Text('Talento Humano')),
-              DropdownMenuItem(value: 'Operaciones', child: Text('Operaciones')),
-            ],
-            onChanged: (value) {},
-          ),
-          const SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-          
-          const SizedBox(height: 20),
-          
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: (){
-                ejecutarMensaje(context, 'Empleado registrado');
+            const SizedBox(height: 20),
 
-              }, 
-              child: const Text('Guardar'),
-            
-            ),
-          )
-        ],
+            // Botón "Siguiente"
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    // Si el formulario es válido, pasamos a la siguiente página
+                    widget.pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  } else {
+                    // Si no es válido, muestra un mensaje o hace algo según sea necesario
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Por favor complete todos los campos')),
+                    );
+                  }
+                },
+                child: const Text('Siguiente'),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 }
-
